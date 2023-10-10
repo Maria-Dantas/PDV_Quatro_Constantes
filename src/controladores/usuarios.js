@@ -1,5 +1,6 @@
 const knex = require("../conexao")
 
+
 const listarCategorias = async (req, res) => {
 
     try {
@@ -11,8 +12,14 @@ const listarCategorias = async (req, res) => {
         return res.status(500).json({ mensagem: 'Erro interno do servidor' })
     }
 }
+const criarUsuario = async (req, res) => {
+    const{nome, email, senha} = req.body;
+}
+
+
 
 module.exports = {
 
     listarCategorias,
+    criarUsuario
 }
