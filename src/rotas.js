@@ -1,6 +1,6 @@
 const express = require('express')
-const { listarCategorias,criarUsuario } = require('./controladores/usuarios')
-const {checarCamposCadastro, checarCamposLogin } = require('./intermediarios/validacao')
+const { listarCategorias,criarUsuario,loginUsuario } = require('./controladores/usuarios')
+const {checarCamposCadastro, checarCamposLogin,checarDuplicidadeEmail } = require('./intermediarios/validacao')
 
 
 
@@ -10,7 +10,7 @@ rotas.post('/login',checarCamposLogin, loginUsuario)
 
 rotas.get('/categoria', listarCategorias)
 
-rotas.post('/usuarios',criarUsuario)
+rotas.post('/usuarios',checarCamposCadastro,checarDuplicidadeEmail,criarUsuario)
 
 
 

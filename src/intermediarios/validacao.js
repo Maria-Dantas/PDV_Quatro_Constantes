@@ -1,3 +1,5 @@
+const knex = require('../conexao')
+
 const checarCamposCadastro = (req, res, next) =>{
 
     const {nome, email, senha} = req.body;
@@ -19,9 +21,27 @@ const checarCamposLogin = (req, res, next) =>{
 
     next();
 }
+const checarDuplicidadeEmail = async (req, res, next) =>{
+    
+    const {email} = req.body;
+
+    try {
+        const verificandoEmail = await knex('usuarios').where({ email }).first();
+        if (verificandoEmail) {
+           return res.status(400).json('O email já existe')
+       }
+    
+        next();
+        
+    } catch (error) {
+        return res.status(500).json({"mensagem de erro": error.message});
+    }
+
+}
 
 
 module.exports = {
     checarCamposCadastro,
-    checarCamposLogin
+    checarCamposLogin,
+    checarDuplicidadeEmail
 }

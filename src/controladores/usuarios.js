@@ -1,5 +1,11 @@
 const knex = require("../conexao");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
+
+require('dotenv').config()
+
+
+const senhajwt = process.env.JWT;
 
 
 const listarCategorias = async (req, res) => {
@@ -15,31 +21,35 @@ const listarCategorias = async (req, res) => {
 }
 
 const criarUsuario = async (req, res) => 
+
 {
+    const { nome, email, senha } = req.body
     try { 
-        const{nome, email, senha} = req.body;
-    if (!nome || !email || !senha)
-    {
-        return res.staus(400).send({mensagem: " Por favor, preencha todos os campos"});
 
-    } 
-     const hashSenha = await bcrypt.hash(senha, 10);
-     const verificandoEmail = await knex.query('select * from usuarios where email = $1'[email])
-     if (emailExiste.rowCount > 0) {
-        return res.status(400).send({ mensagem: 'Email já cadastrado, tente outro' })
+     const verificandoEmail = await knex('usuarios').where({ email }).first();
+     if (verificandoEmail) {
+        return res.status(400).json('O email já existe')
     }
-     const query =
-     "INSERT INTO usuarios (name, email,senha) VALUES ($1, $2, $3);"
+    const senhaCriptografada = await bcrypt.hash(senha, 10)
 
-     const valor =[nome, email, hashSenha];
-     const reultado =await knex.query(query, valor);
-     return res.status(200).send({mensagem:'cadastro reslizado com sucesso'})
+    const usuario = await knex('usuarios')
+        .insert({
+            nome,
+            email,
+            senha: senhaCriptografada,
+        })
+        .returning('*')
 
-
+    if (!usuario[0]) {
+        return res.status(400).json('O usuário não foi cadastrado.')
     }
-    catch(error){
-        return res.status(500).send({mensagem:'Error inesperado'})
-    }
+
+    return res.status(200).json(usuario[0])
+
+} catch (error) {
+    return res.status(400).json(error.message)
+}
+
 }
 
 const loginUsuario = async(req, res)=>{
@@ -48,7 +58,7 @@ const loginUsuario = async(req, res)=>{
     try {
         const { rows } = await knex.query("SELECT * FROM usuarios WHERE email=$1", [email]);
 
-        const senhaValida = bcrypt.compare(senha, rows[0].senha);
+        const senhaValida = await bcrypt.compare(senha, rows[0].senha);
 
         if (!senhaValida) {
             return res.status(401).json({ mensagem: "Usuário e/ou senha inválidos!" });
