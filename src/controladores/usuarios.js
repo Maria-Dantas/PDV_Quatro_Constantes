@@ -1,4 +1,4 @@
-const knex = require("../conexao")
+const knex = require("../conexao");
 const bcrypt = require("bcrypt");
 
 
@@ -42,10 +42,36 @@ const criarUsuario = async (req, res) =>
     }
 }
 
+const loginUsuario = async(req, res)=>{
+    const { email, senha } = req.body;
+
+    try {
+        const { rows } = await knex.query("SELECT * FROM usuarios WHERE email=$1", [email]);
+
+        const senhaValida = bcrypt.compare(senha, rows[0].senha);
+
+        if (!senhaValida) {
+            return res.status(401).json({ mensagem: "Usuário e/ou senha inválidos!" });
+        }
+
+        const token = jwt.sign({ usuario_id: rows[0].id }, senhajwt, { expiresIn: '8h' });
+
+        const { senha: _, ...usuarioLogado } = rows[0];
+
+        return res.status(200).json({ usuario: usuarioLogado, token });
+
+
+    } catch (error) {
+        return res.status(500).json({ mensagem: "Erro interno do servidor." });
+    }
+}
+
+
 
 
 module.exports = {
 
     listarCategorias,
-    criarUsuario
+    criarUsuario,
+    loginUsuario
 }
