@@ -14,38 +14,65 @@ const listarCategorias = async (req, res) => {
     }
 }
 
-const criarUsuario = async (req, res) => 
-{
-    try { 
-        const{nome, email, senha} = req.body;
-    if (!nome || !email || !senha)
-    {
-        return res.staus(400).send({mensagem: " Por favor, preencha todos os campos"});
+const cadastrarUsuario = async (req, res) => {
+    const { nome, email, senha } = req.body
 
-    } 
-     const hashSenha = await bcrypt.hash(senha, 10);
-     const verificandoEmail = await knex.query('select * from usuarios where email = $1'[email])
-     if (emailExiste.rowCount > 0) {
-        return res.status(400).send({ mensagem: 'Email já cadastrado, tente outro' })
+    const emailExiste = await knex('usuarios').where('email', email).debug()
+
+    if (emailExiste.rowCount > 0) {
+        return res.status(400).json({ mensagem: 'Já existe outro usuário cadastrado com o e-mail informado!' })
     }
-     const query =
-     "INSERT INTO usuarios (name, email,senha) VALUES ($1, $2, $3);"
+    try {
 
-     const valor =[nome, email, hashSenha];
-     const reultado =await knex.query(query, valor);
-     return res.status(200).send({mensagem:'cadastro reslizado com sucesso'})
+        if (!nome || !email || !senha) {
+            return res.status(404).json({ mensagem: 'Todos os campos obrigatórios devem ser informados!' })
+        }
+
+
+        const senhaCriptografada = await bcrypt.hash(senha, 10)
+
+        const criarUsuario = await knex('usuarios')
+            .insert({ nome, email, senha: senhaCriptografada })
+            .returning(['id', 'nome', 'email']);
+
+
+        if (criarUsuario.length === 0) {
+            return res.status(400).json('Não foi possível cadastrar o usuário.');
+        }
+
+        return res.status(200).json(criarUsuario[0]);
 
 
     }
-    catch(error){
-        return res.status(500).send({mensagem:'Error inesperado'})
+    catch (error) {
+        return res.status(500).json(error.message);
+
     }
 }
+
+
 
 
 
 module.exports = {
 
     listarCategorias,
-    criarUsuario
+    cadastrarUsuario,
 }
+
+
+
+// const bcrypt = require('bcryptjs');
+
+// const senha = 'minhasenha123';
+
+// // Geração do hash
+// const salt = bcrypt.genSaltSync(10);
+// const hash = bcrypt.hashSync(senha, salt);
+
+// console.log('Senha original:', senha);
+// console.log('Senha criptografada:', hash);
+
+// // Verificação da senha
+// const senhaIncorreta = 'senhaerrada123';
+// const senhaCorreta = 'minhasenha123';
