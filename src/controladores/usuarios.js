@@ -17,11 +17,12 @@ const listarCategorias = async (req, res) => {
 const cadastrarUsuario = async (req, res) => {
     const { nome, email, senha } = req.body
 
-    const emailExiste = await knex('usuarios').where('email', email).debug()
+    const emailExiste = await knex('usuarios').where('email', email)
 
-    if (emailExiste.rowCount > 0) {
+    if (emailExiste.length > 0) {
         return res.status(400).json({ mensagem: 'Já existe outro usuário cadastrado com o e-mail informado!' })
     }
+
     try {
 
         if (!nome || !email || !senha) {
