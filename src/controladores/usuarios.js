@@ -1,5 +1,11 @@
-const knex = require("../conexao")
+const knex = require("../conexao");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
+
+require('dotenv').config()
+
+
+const senhajwt = process.env.JWT;
 
 
 const listarCategorias = async (req, res) => {
@@ -14,6 +20,15 @@ const listarCategorias = async (req, res) => {
     }
 }
 
+
+const criarUsuario = async (req, res) => 
+
+{
+    const { nome, email, senha } = req.body
+    try { 
+
+    const senhaCriptografada = await bcrypt.hash(senha, 10)
+    
 const cadastrarUsuario = async (req, res) => {
     const { nome, email, senha } = req.body
 
@@ -44,9 +59,56 @@ const cadastrarUsuario = async (req, res) => {
         return res.status(200).json(criarUsuario[0]);
 
 
+    const usuario = await knex('usuarios')
+        .insert({
+            nome,
+            email,
+            senha: senhaCriptografada,
+        })
+        .returning('*')
+
+    if (!usuario[0]) {
+        return res.status(400).json('O usuário não foi cadastrado.')
     }
+
+
+    return res.status(200).json(usuario[0])
+
+} catch (error) {
+    return res.status(500).json(error.message)
+}
+
+}
+
+const loginUsuario = async(req, res)=>{
+    const { email, senha } = req.body;
+
+    try {
+        const usuario = await knex('usuarios').where({ email }).first()
+
+		if (!usuario) {
+			return res.status(404).json('O usuario não foi encontrado')
+		}
+
+        const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+        if (!senhaValida) {
+            return res.status(401).json({ mensagem: "Usuário e/ou senha inválidos!" });
+        }
+
+        const token = jwt.sign({ id: usuario.id }, senhajwt, { expiresIn: '8h' })
+
+        const { senha: _, ...usuarioLogado } = usuario;
+
+        return res.status(200).json({ usuario: usuarioLogado, token });
+
+
+    } catch (error) {
+        return res.status(500).json(error.message);
+
     catch (error) {
         return res.status(500).json(error.message);
+
 
     }
 }
@@ -58,22 +120,9 @@ const cadastrarUsuario = async (req, res) => {
 module.exports = {
 
     listarCategorias,
-    cadastrarUsuario,
+    criarUsuario,
+    loginUsuario
 }
 
 
 
-// const bcrypt = require('bcryptjs');
-
-// const senha = 'minhasenha123';
-
-// // Geração do hash
-// const salt = bcrypt.genSaltSync(10);
-// const hash = bcrypt.hashSync(senha, salt);
-
-// console.log('Senha original:', senha);
-// console.log('Senha criptografada:', hash);
-
-// // Verificação da senha
-// const senhaIncorreta = 'senhaerrada123';
-// const senhaCorreta = 'minhasenha123';

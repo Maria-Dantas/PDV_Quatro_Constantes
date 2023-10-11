@@ -1,13 +1,22 @@
 const express = require('express')
+
+const { listarCategorias,criarUsuario,loginUsuario } = require('./controladores/usuarios')
+const {checarCamposCadastro, checarCamposLogin,checarDuplicidadeEmail } = require('./intermediarios/validacao')
+
 const { listarCategorias, cadastrarUsuario } = require('./controladores/usuarios')
+
 
 
 
 const rotas = express()
 
+rotas.post('/login',checarCamposLogin, loginUsuario)
 
 rotas.get('/categoria', listarCategorias)
-rotas.post('/usuarios', cadastrarUsuario)
+
+
+rotas.post('/usuarios',checarCamposCadastro,checarDuplicidadeEmail,criarUsuario)
+
 
 
 
