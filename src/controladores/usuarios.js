@@ -20,6 +20,7 @@ const listarCategorias = async (req, res) => {
     }
 }
 
+
 const criarUsuario = async (req, res) => 
 
 {
@@ -27,6 +28,35 @@ const criarUsuario = async (req, res) =>
     try { 
 
     const senhaCriptografada = await bcrypt.hash(senha, 10)
+    
+const cadastrarUsuario = async (req, res) => {
+    const { nome, email, senha } = req.body
+
+    const emailExiste = await knex('usuarios').where('email', email).debug()
+
+    if (emailExiste.rowCount > 0) {
+        return res.status(400).json({ mensagem: 'Já existe outro usuário cadastrado com o e-mail informado!' })
+    }
+    try {
+
+        if (!nome || !email || !senha) {
+            return res.status(404).json({ mensagem: 'Todos os campos obrigatórios devem ser informados!' })
+        }
+
+
+        const senhaCriptografada = await bcrypt.hash(senha, 10)
+
+        const criarUsuario = await knex('usuarios')
+            .insert({ nome, email, senha: senhaCriptografada })
+            .returning(['id', 'nome', 'email']);
+
+
+        if (criarUsuario.length === 0) {
+            return res.status(400).json('Não foi possível cadastrar o usuário.');
+        }
+
+        return res.status(200).json(criarUsuario[0]);
+
 
     const usuario = await knex('usuarios')
         .insert({
@@ -39,6 +69,7 @@ const criarUsuario = async (req, res) =>
     if (!usuario[0]) {
         return res.status(400).json('O usuário não foi cadastrado.')
     }
+
 
     return res.status(200).json(usuario[0])
 
@@ -73,8 +104,14 @@ const loginUsuario = async(req, res)=>{
 
     } catch (error) {
         return res.status(500).json(error.message);
+
+    catch (error) {
+        return res.status(500).json(error.message);
+
+
     }
 }
+
 
 
 
@@ -85,3 +122,6 @@ module.exports = {
     criarUsuario,
     loginUsuario
 }
+
+
+
