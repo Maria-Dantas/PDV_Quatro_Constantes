@@ -28,7 +28,7 @@ const checarDuplicidadeEmail = async (req, res, next) =>{
     try {
         const verificandoEmail = await knex('usuarios').where({ email }).first();
         if (verificandoEmail) {
-           return res.status(400).json('O email já existe')
+           return res.status(400).json('Já existe usuário cadastrado com o email informado')
        }
     
         next();
