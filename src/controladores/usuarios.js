@@ -1,6 +1,12 @@
 const knex = require("../conexao");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const { validarEmail, checarCamposCadastro } = require('../utilidades/funcoes-usuarios');
+const { usuarioAtualizado, emailExisteParaOutrosUsuarios } = require('../servicos/consultas-usuarios')
+const { erroServidor,
+    erroAutenticacao,
+    erroValidacaoDados,
+    erroTransacao } = require('../servicos/mensagens');
 
 require('dotenv').config()
 
@@ -22,6 +28,10 @@ const listarCategorias = async (req, res) => {
 
 const cadastrarUsuario = async (req, res) => {
     const { nome, email, senha } = req.body
+
+    const informacoesVerificadas = await checarCamposCadastro(req);
+
+    console.log(informacoesVerificadas);
 
     const emailExiste = await knex('usuarios').where('email', email)
 
@@ -80,12 +90,50 @@ const loginUsuario = async (req, res) => {
 
     }
     catch (error) {
+
         return res.status(500).json(error.message);
 
     }
 }
 
+const detalharUsuario = async (req, res) => {
+    try {
+        return res.json(req.usuario);
+    } catch (error) {
+        return res.status(500).json(erroServidor);
+    };
+};
 
+const atualizarUsuario = async (req, res) => {
+    const { id } = req.usuario;
+    const { nome, email, senha } = req.body;
+
+    if (!nome || !email || !senha) {
+        return res.status(400).json(erroValidacaoDados[0]);
+    };
+
+    const emailVerificado = await validarEmail(email); // retorna o e-mail ou false
+
+    if (nome.length < 3 || nome.trim() === '' || senha.length < 6 || senha.trim() === '' || !emailVerificado) {
+        return res.status(400).json(erroValidacaoDados[2]);
+    };
+
+    try {
+        const quantidadeEncontrada = await emailExisteParaOutrosUsuarios(emailVerificado, id)
+
+        if (quantidadeEncontrada > 0) {
+            return res.status(400).json(erroValidacaoDados[1]); // Email já existe para outro usuário
+        };
+
+        const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+        await usuarioAtualizado(nome, emailVerificado, senhaCriptografada, id);
+
+        return res.status(204).send();
+    } catch (error) {
+        return res.status(500).json(erroServidor);
+    };
+};
 
 
 
@@ -93,5 +141,8 @@ module.exports = {
 
     listarCategorias,
     cadastrarUsuario,
-    loginUsuario
+    loginUsuario,
+    detalharUsuario,
+    atualizarUsuario
+
 }
