@@ -1,106 +1,46 @@
-const knex = require("../conexao");
-const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
-const { validarEmail, checarCamposCadastro } = require('../utilidades/funcoes-usuarios');
-const { usuarioAtualizado, emailExisteParaOutrosUsuarios } = require('../servicos/consultas-usuarios')
-const { erroServidor,
-    erroAutenticacao,
-    erroValidacaoDados,
-    erroTransacao } = require('../servicos/mensagens');
-
-require('dotenv').config()
-
-
-const senhajwt = process.env.JWT;
-
+const bcrypt = require('bcrypt');
+const { detalharCategorias,
+    verificarEmailExistente,
+    emailExisteParaOutrosUsuarios,
+    novoUsuario,
+    usuarioAtualizado } = require('../servicos/consultas-usuarios');
 
 const listarCategorias = async (req, res) => {
-
     try {
-        const listar = await knex('categorias')
+        const categorias = await detalharCategorias();
 
-        return res.status(200).json(listar)
-
+        return res.status(200).json(categorias);
     } catch (error) {
-        return res.status(500).json({ mensagem: 'Erro interno do servidor' })
-    }
-}
+        return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
+    };
+};
 
 const cadastrarUsuario = async (req, res) => {
     const { nome, email, senha } = req.body
 
-    const informacoesVerificadas = await checarCamposCadastro(req);
-
-    console.log(informacoesVerificadas);
-
-    const emailExiste = await knex('usuarios').where('email', email)
-
-    if (emailExiste.length > 0) {
-        return res.status(400).json({ mensagem: 'Já existe outro usuário cadastrado com o e-mail informado!' })
-    }
-
     try {
+        const usuarioEncontrado = await verificarEmailExistente(email);
 
-        if (!nome || !email || !senha) {
-            return res.status(404).json({ mensagem: 'Todos os campos obrigatórios devem ser informados!' })
-        }
+        if (usuarioEncontrado) {
+            return res.status(400).json({ mensagem: 'Já existe usuário cadastrado com o e-mail informado.' });
+        };
 
-        const senhaCriptografada = await bcrypt.hash(senha, 10)
+        const senhaCriptografada = await bcrypt.hash(senha, 10);
 
-        const criarUsuario = await knex('usuarios')
-            .insert({ nome, email, senha: senhaCriptografada })
-            .returning(['id', 'nome', 'email']);
+        const usuario = await novoUsuario(nome, email, senhaCriptografada);
 
-
-        if (criarUsuario.length === 0) {
-            return res.status(400).json('Não foi possível cadastrar o usuário.');
-        }
-
-        return res.status(200).json(criarUsuario[0]);
-
+        return res.status(201).json(usuario);
     }
     catch (error) {
-        return res.status(500).json(error.message)
-    }
-
-}
-
-const loginUsuario = async (req, res) => {
-    const { email, senha } = req.body;
-
-    try {
-        const usuario = await knex('usuarios').where({ email }).first()
-
-        if (!usuario) {
-            return res.status(404).json('O usuario não foi encontrado')
-        }
-
-        const senhaValida = await bcrypt.compare(senha, usuario.senha);
-
-        if (!senhaValida) {
-            return res.status(401).json({ mensagem: "Usuário e/ou senha inválidos!" });
-        }
-
-        const token = jwt.sign({ id: usuario.id }, senhajwt, { expiresIn: '8h' })
-
-        const { senha: _, ...usuarioLogado } = usuario;
-
-        return res.status(200).json({ usuario: usuarioLogado, token });
-
-
-    }
-    catch (error) {
-
-        return res.status(500).json(error.message);
-
-    }
-}
+        return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
+    };
+};
 
 const detalharUsuario = async (req, res) => {
     try {
         return res.json(req.usuario);
     } catch (error) {
-        return res.status(500).json(erroServidor);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     };
 };
 
@@ -108,41 +48,26 @@ const atualizarUsuario = async (req, res) => {
     const { id } = req.usuario;
     const { nome, email, senha } = req.body;
 
-    if (!nome || !email || !senha) {
-        return res.status(400).json(erroValidacaoDados[0]);
-    };
-
-    const emailVerificado = await validarEmail(email); // retorna o e-mail ou false
-
-    if (nome.length < 3 || nome.trim() === '' || senha.length < 6 || senha.trim() === '' || !emailVerificado) {
-        return res.status(400).json(erroValidacaoDados[2]);
-    };
-
     try {
-        const quantidadeEncontrada = await emailExisteParaOutrosUsuarios(emailVerificado, id)
+        const quantidadeEncontrada = await emailExisteParaOutrosUsuarios(email, id)
 
         if (quantidadeEncontrada > 0) {
-            return res.status(400).json(erroValidacaoDados[1]); // Email já existe para outro usuário
+            return res.status(400).json({ mensagem: 'Já existe usuário cadastrado com o e-mail informado.' });
         };
 
         const senhaCriptografada = await bcrypt.hash(senha, 10);
 
-        await usuarioAtualizado(nome, emailVerificado, senhaCriptografada, id);
+        await usuarioAtualizado(nome, email, senhaCriptografada, id);
 
         return res.status(204).send();
     } catch (error) {
-        return res.status(500).json(erroServidor);
+        return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     };
 };
 
-
-
 module.exports = {
-
     listarCategorias,
     cadastrarUsuario,
-    loginUsuario,
     detalharUsuario,
     atualizarUsuario
-
 }

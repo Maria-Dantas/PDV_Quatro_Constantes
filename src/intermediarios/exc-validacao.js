@@ -1,25 +1,14 @@
-require('dotenv').config();
+const knex = require('../conexao')
 
-const validarEmail = (email) => {
-    let emailValido = true;
+const checarCamposCadastro = (req, res, next) => {
 
-    if (email.indexOf("@") < 0 || email.indexOf(".") < 0 || email.indexOf(".") === 0 ||
-        email.lastIndexOf(".") === email.length - 1 || email.trim() === '') {
-        emailValido = false;
-        return emailValido;
-    };
+    const { nome, email, senha } = req.body;
 
-    if (emailValido) {
-        return email.trim();
-    };
-};
-
-const checarCamposCadastro = (nome, email, senha) => {
     if (!nome || !email || !senha) {
         return res.status(400).json({ mensagem: "Todos os campos devem ser informados" });
     }
 
-    return { nome, email, senha };
+    next();
 }
 
 const checarCamposLogin = (req, res, next) => {
@@ -56,7 +45,3 @@ module.exports = {
     checarCamposLogin,
     checarDuplicidadeEmail
 }
-
-module.exports = {
-    validarEmail
-};

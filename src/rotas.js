@@ -1,29 +1,18 @@
-const express = require('express')
-
-const { listarCategorias, criarUsuario, loginUsuario, cadastrarUsuario, detalharUsuario, atualizarUsuario } = require('./controladores/usuarios')
-const { checarCamposCadastro, checarCamposLogin, checarDuplicidadeEmail } = require('./intermediarios/validacao')
-
+const express = require('express');
+const { listarCategorias, cadastrarUsuario, detalharUsuario, atualizarUsuario } = require('./controladores/usuarios');
+const loginUsuario = require('./controladores/login');
 const verificarUsuarioLogado = require('./intermediarios/autenticacao');
+const validarRequisicao = require('./intermediarios/validarRequisicao');
+const usuarioSchema = require('./validacoes/usuarioSchema');
+const loginSchema = require('./validacoes/loginSchema');
 
+const rotas = express();
 
-
-const rotas = express()
-
-rotas.post('/usuario', cadastrarUsuario)
-
-rotas.post('/login', checarCamposLogin, loginUsuario)
-
-//rotas.post('/usuarios', cadastrarUsuario)
-
-rotas.get('/categoria', listarCategorias)
-
-
-//rotas.post('/usuarios', checarCamposCadastro, checarDuplicidadeEmail, criarUsuario)
-
+rotas.get('/categoria', listarCategorias);
+rotas.post('/usuario', validarRequisicao(usuarioSchema), cadastrarUsuario);
+rotas.post('/login', validarRequisicao(loginSchema), loginUsuario);
 rotas.use(verificarUsuarioLogado);
-
 rotas.get('/usuario', detalharUsuario);
-rotas.put('/usuario', atualizarUsuario);
+rotas.put('/usuario', validarRequisicao(usuarioSchema), atualizarUsuario);
 
-
-module.exports = rotas   
+module.exports = rotas;
