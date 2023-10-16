@@ -6,9 +6,9 @@ const erroAutenticacao = [
 ];
 
 const erroValidacaoDados = [
-    { mensagem: 'Todos os campos são obrigatórios' },
-    { mensagem: 'Já existe usuário cadastrado com o e-mail informado' },
-    { mensagem: 'Dados inválidos' }
+    { mensagem: 'Todos os campos são obrigatórios.' },
+    { mensagem: 'Já existe usuário cadastrado com o e-mail informado.' },
+    { mensagem: 'Usuário e/ou senha inválidos!' }
 ];
 
 const erroTransacao = [
