@@ -6,9 +6,11 @@
 
 ## Como entregar?
 
-- [ ] Crie um repositório público no GitHub de algum membro de equipe
-- [ ] Adicione os membros da equipe no repositório
-- [ ] Enviei o link desse repositório na plataforma
+- [X] Crie um repositório público no GitHub de algum membro de equipe
+- [X] Adicione os membros da equipe no repositório
+- [X] Enviei o link desse repositório na plataforma
+- [X] Link do deploy https://ill-red-scarab-kit.cyclic.cloud/
+
 
 ## Descrição do desafio
 
