@@ -25,11 +25,6 @@ const editarProduto = async (req, res) => {
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
     try {
 
-        const produtoEncontrado = await verificarProdutoExistente(descricao);
-        if (produtoEncontrado) {
-            return res.status(400).json({ mensagem: 'Já existe um produto cadastrado com a descrição informada.' });
-        }
-
         await produtoAtualizado(id, descricao, quantidade_estoque, valor, categoria_id);
 
         return res.status(204).send();
