@@ -58,7 +58,7 @@ const listarProdutos = async (req, res) => {
 }
 
 const detalharProduto = async (req, res) => {
-    const { id } = req.paramns
+    const { id } = req.params
     try {
         const produtoEncontrado = await verificarProdutoId(id);
 
@@ -76,7 +76,7 @@ const detalharProduto = async (req, res) => {
 
 }
 const deletarProduto = async (req, res) => {
-    const { id } = req.paramns
+    const { id } = req.params
 
     const IdProdutoEncontrado = await verificarProdutoId(id);
     if (!IdProdutoEncontrado) {
