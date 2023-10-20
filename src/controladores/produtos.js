@@ -52,4 +52,19 @@ const listarProdutos = async (req,res) =>{
     };
 }
 
-module.exports = {cadastrarProduto, editarProduto,listarProdutos}
+const detalharproduto =async(req,res)=>{
+    const {id} = req.paramns
+    //try
+    { const produto = await knex('produtos').where({id})
+
+    }
+
+
+
+}
+const deletarProduto = async (req,res)=>{
+    const{id} =req.paramns
+
+    const validarId =
+}
+module.exports = {cadastrarProduto, editarProduto,listarProdutos ,deletarProduto, detalharProdutos}
