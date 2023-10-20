@@ -66,7 +66,7 @@ const detalharProduto = async (req, res) => {
             return res.status(404).json({ mensagem: 'O Produto não foi encontrado.' });
 
         }
-        return res.status(204).json(produtoEncontrado)
+        return res.status(200).json(produtoEncontrado)
 
     } catch (error) {
         return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
