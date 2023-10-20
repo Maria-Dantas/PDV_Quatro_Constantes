@@ -22,8 +22,8 @@ rotas.put('/usuario', validarRequisicao(usuarioSchema), atualizarUsuario);
 rotas.post('/produto', validarRequisicao(produtoSchema), cadastrarProduto);
 rotas.put('/produto/:id', verificarProdutoId, validarRequisicao(produtoSchema), editarProduto);
 rotas.get('/produto', listarProdutos);
-rotas.delete('/produto/:id', validarRequisicao(produtoSchema), deletarProduto);
-rotas.get('/produto/:id', validarRequisicao(produtoSchema), detalharProduto);
+rotas.delete('/produto/:id', deletarProduto);
+rotas.get('/produto/:id', detalharProduto);
 
 rotas.post('/cliente', validarRequisicao(clienteSchema), cadastrarCliente);
 rotas.put('/cliente/:id', validarRequisicao(clienteSchema), editarDadosDoCliente);
