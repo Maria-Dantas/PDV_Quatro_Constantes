@@ -54,9 +54,21 @@ const listarProdutos = async (req,res) =>{
 
 const detalharproduto =async(req,res)=>{
     const {id} = req.paramns
-    //try
-    { const produto = await knex('produtos').where({id})
+    try
+    { 
+        const produtoEncontrado = await verificarProdutoId(id);
 
+        if (!produtoEncontrado){
+            return res.status(404).json({ mensagem: 'O Produto não foi encontrado.' });
+
+        }
+        return res.status(204).json(produtoEncontrado)
+    
+        
+      
+
+    }catch (error){
+        return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     }
 
 
@@ -65,6 +77,19 @@ const detalharproduto =async(req,res)=>{
 const deletarProduto = async (req,res)=>{
     const{id} =req.paramns
 
-    const validarId =
+    const IdProdutoEncontrado = await verificarProdutoId(id);
+        if (!IdProdutoEncontrado){
+            return res.status(404).json({ mensagem: 'O Produto não foi encontrado.' });
+         
+        } 
+        try{
+        if (IdProdutoEncontrado){
+           await knex("produtos").where({id}).delete()
+           return res.status(204).send({mensagem: 'Produto deletado'})
+
+        }}catch (error){
+            return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
+        }
+
 }
 module.exports = {cadastrarProduto, editarProduto,listarProdutos ,deletarProduto, detalharProdutos}
