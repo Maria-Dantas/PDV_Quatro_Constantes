@@ -1,7 +1,7 @@
 const knex = require('../conexao');
 
 const verificarClienteId = async (id) => {
-    const buscaId = await knex('cliente')
+    const buscaId = await knex('clientes')
         .where({ id })
         .first();
 
@@ -9,7 +9,7 @@ const verificarClienteId = async (id) => {
 };
 
 const verificarEmailExistente = async (email) => {
-    const buscaEmail = await knex('cliente')
+    const buscaEmail = await knex('clientes')
         .where({ email })
         .first();
 
@@ -17,7 +17,7 @@ const verificarEmailExistente = async (email) => {
 };
 
 const emailExisteParaOutrosClientes = async (email, id) => {
-    const buscaEmailOutroCliente = await knex('cliente')
+    const buscaEmailOutroCliente = await knex('clientes')
         .where({ email })
         .where('id', '!=', id)
         .count();
@@ -26,7 +26,7 @@ const emailExisteParaOutrosClientes = async (email, id) => {
 };
 
 const verificarCpfExistente = async (cpf) => {
-    const buscaCpf = await knex('cliente')
+    const buscaCpf = await knex('clientes')
         .where({ cpf })
         .first();
 
@@ -34,7 +34,7 @@ const verificarCpfExistente = async (cpf) => {
 };
 
 const cpfExisteParaOutrosCliente = async (cpf, id) => {
-    const buscaCpfOutroCliente = await knex('cliente')
+    const buscaCpfOutroCliente = await knex('clientes')
         .where({ cpf })
         .where('id', '!=', id)
         .count();
@@ -48,6 +48,24 @@ const detalharClientes = async () => {
     return listar;
 };
 
+const novoCliente = async (nome, email, cpf) => {
+    const insereCliente = await knex('clientes')
+        .insert({
+            nome,
+            email,
+            cpf,
+            cep,
+            rua,
+            numero,
+            bairro,
+            cidade,
+            estado
+        }).returning('*');
+
+    const { cliente } = insereCliente[0];
+
+    return cliente;
+};
 
 const clienteAtualizado = async (nome, email, cpf, id) => {
     const atualizarCliente = await knex('clientes')
@@ -68,5 +86,6 @@ module.exports = {
     verificarCpfExistente,
     cpfExisteParaOutrosCliente,
     detalharClientes,
+    novoCliente,
     clienteAtualizado
 };

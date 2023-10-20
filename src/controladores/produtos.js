@@ -1,9 +1,14 @@
-const { novoProduto, verificarProdutoId, produtoAtualizado, verificarCategoriaId, detalharProdutos } = require('../servicos/consultas-produtos');
+const { novoProduto, verificarProdutoId, produtoAtualizado, verificarCategoriaId, detalharProdutos, verificarProdutoExistente } = require('../servicos/consultas-produtos');
 
 const cadastrarProduto = async (req, res) => {
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
 
     try {
+        const produtoEncontrado = await verificarProdutoExistente(descricao);
+        if (produtoEncontrado) {
+            return res.status(400).json({ mensagem: 'Já existe um produto cadastrado com a descrição informada.' });
+        }
+
         const produto = await novoProduto(descricao, quantidade_estoque, valor, categoria_id);
 
         return res.status(201).json(produto);
@@ -19,6 +24,11 @@ const editarProduto = async (req, res) => {
 
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
     try {
+
+        const produtoEncontrado = await verificarProdutoExistente(descricao);
+        if (produtoEncontrado) {
+            return res.status(400).json({ mensagem: 'Já existe um produto cadastrado com a descrição informada.' });
+        }
 
         await produtoAtualizado(id, descricao, quantidade_estoque, valor, categoria_id);
 

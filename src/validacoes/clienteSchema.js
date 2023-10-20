@@ -1,6 +1,6 @@
 const joi = require('joi');
 
-const clienteSchema = joi.object({
+const clientesSchema = joi.object({
     nome: joi.string().required().messages({
         'any.required': 'O campo nome é obrigatório.',
         'string.empty': 'O campo nome é obrigatório.'
@@ -16,9 +16,23 @@ const clienteSchema = joi.object({
         'number.base': 'O campo cpf é obrigatório e requer um número inteiro.',
         'number.integer': 'O campo cpf é obrigatório e requer um número inteiro.',
         'number.positive': 'O campo cpf é obrigatório e requer um número inteiro positivo.'
-    })
+    }),
+
+
+
+    // cep: joi.number().integer(),
+    // rua: joi.string().integer()
+    // numero: joi.number().integer(),
+    // bairro: joi.string().integer(),
+    // cidade: joi.string().integer(),
+    // estado: joi.string().char(2)
+
+
+
+
+
 
 });
 
 
-module.exports = clienteSchema;
+module.exports = clientesSchema;

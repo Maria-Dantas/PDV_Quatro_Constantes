@@ -8,7 +8,7 @@ const { verificarEmailExistente,
 
 
 const cadastrarCliente = async (req, res) => {
-    const { nome, email, cpf } = req.body
+    const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } = req.body
 
     try {
         const emailExiste = await verificarEmailExistente(email);
@@ -23,13 +23,15 @@ const cadastrarCliente = async (req, res) => {
             return res.status(400).json({ mensagem: 'Já existe cliente cadastrado com o CPF informado.' });
         };
 
-        const cliente = await novoCliente(nome, email, cpf);
+        const clientes = await novoCliente(nome, email, cpf, cep, rua, numero, bairro, cidade, estado);
 
-        return res.status(201).json(cliente);
+        return res.status(201).json(clientes);
     }
     catch (error) {
         return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     };
+
+
 };
 
 const editarDadosDoCliente = async (req, res) => {
@@ -86,6 +88,7 @@ module.exports = {
     cadastrarCliente,
     editarDadosDoCliente,
     listarClientes,
+    novoCliente,
     detalharCliente,
 }
 

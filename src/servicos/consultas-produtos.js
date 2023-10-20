@@ -11,6 +11,14 @@ const novoProduto = async (descricao, quantidade_estoque, valor, categoria_id) =
 
     return insereProduto[0];
 };
+
+const verificarProdutoExistente = async (descricao) => {
+    const buscaDescricao = await knex('produtos')
+        .where({ descricao })
+        .first();
+
+    return buscaDescricao;
+};
 const verificarProdutoId = async (id) => {
     const buscaId = await knex('produtos')
         .where({ id })
@@ -18,13 +26,13 @@ const verificarProdutoId = async (id) => {
 
     return buscaId;
 };
-const produtoAtualizado = async ( id, descricao, quantidade_estoque, valor, categoria_id ) => {
+const produtoAtualizado = async (id, descricao, quantidade_estoque, valor, categoria_id) => {
     const atualizaProduto = await knex('produtos')
         .where({ id })
         .update({
-            descricao, 
-            quantidade_estoque, 
-            valor, 
+            descricao,
+            quantidade_estoque,
+            valor,
             categoria_id
         })
 
@@ -41,4 +49,4 @@ const detalharProdutos = async () => {
 
     return listar;
 };
-module.exports = {novoProduto,verificarProdutoId,produtoAtualizado,verificarCategoriaId,detalharProdutos};
+module.exports = { novoProduto, verificarProdutoId, produtoAtualizado, verificarCategoriaId, detalharProdutos, verificarProdutoExistente };

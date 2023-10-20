@@ -18,13 +18,14 @@ insert into categorias (descricao)
 values ('Informática'), ('Celulares'), ('Beleza e Perfumaria'), ('Mercado'), ('Livros e Papelaria'),
 ('Brinquedos'), ('Moda'), ('Bebê'), ('Games');
 
-create table produtos (
+CREATE TABLE produtos (
   id serial primary key unique,
-  descricao text not null, 
+  descricao text not null unique, 
   quantidade_estoque integer not null,
   valor integer not null,
   categoria_id integer not null references categorias (id)
 );
+
 
 create table clientes (
   id serial primary key unique,
