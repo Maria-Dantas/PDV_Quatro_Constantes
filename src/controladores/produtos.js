@@ -72,8 +72,6 @@ const detalharProduto = async (req, res) => {
         return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     }
 
-
-
 }
 const deletarProduto = async (req, res) => {
     const { id } = req.params
@@ -90,7 +88,7 @@ const deletarProduto = async (req, res) => {
 
         }
     } catch (error) {
-        return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
+        return res.status(500).json({ mensagem: error.messege });
     }
 
 }
