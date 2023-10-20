@@ -52,7 +52,7 @@ const listarProdutos = async (req,res) =>{
     };
 }
 
-const detalharproduto =async(req,res)=>{
+const detalharProdutos =async(req,res)=>{
     const {id} = req.paramns
     try
     { 
