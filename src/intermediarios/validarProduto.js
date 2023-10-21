@@ -1,15 +1,13 @@
-const knex = require('../conexao');
+const {verificarProdutoId}= require('../servicos/consultas-produtos');
 
-const verificarProdutoId = async (req,res,next) => {
+const validarProduto = async (req,res,next) => {
     const {id}=req.params;
 
-    const buscaId = await knex('produtos')
-        .where({ id })
-        .first();
+    const produtoExiste= await verificarProdutoId(id);
 
-    if (!buscaId) {
+    if (!produtoExiste) {
         return res.status(404).json({ mensagem: 'Produto não encontrado.' });
     }
     next();
 };
-module.exports = verificarProdutoId;
+module.exports = validarProduto;
