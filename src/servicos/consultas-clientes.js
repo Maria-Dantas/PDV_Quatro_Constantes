@@ -33,7 +33,7 @@ const verificarCpfExistente = async (cpf) => {
     return buscaCpf;
 };
 
-const cpfExisteParaOutrosCliente = async (cpf, id) => {
+const cpfExisteParaOutrosClientes = async (cpf, id) => {
     const buscaCpfOutroCliente = await knex('clientes')
         .where({ cpf })
         .where('id', '!=', id)
@@ -42,13 +42,21 @@ const cpfExisteParaOutrosCliente = async (cpf, id) => {
     return buscaCpfOutroCliente[0].count;
 };
 
-const detalharClientes = async () => {
+const listar = async () => {
     const listar = await knex('clientes');
 
     return listar;
 };
 
-const novoCliente = async (nome, email, cpf) => {
+const detalhar = async (id) => {
+    const buscaId = await knex('clientes')
+        .where({ id })
+        .first();
+
+    return buscaId;
+};
+
+const novoCliente = async (nome, email, cpf, cep, rua, numero, bairro, cidade, estado) => {
     const insereCliente = await knex('clientes')
         .insert({
             nome,
@@ -62,18 +70,26 @@ const novoCliente = async (nome, email, cpf) => {
             estado
         }).returning('*');
 
-    const { cliente } = insereCliente[0];
+    console.log(insereCliente)
+
+    const cliente = insereCliente[0];
 
     return cliente;
 };
 
-const clienteAtualizado = async (nome, email, cpf, id) => {
+const clienteAtualizado = async (nome, email, id, cpf, cep, rua, numero, bairro, cidade, estado) => {
     const atualizarCliente = await knex('clientes')
         .where({ id })
         .update({
             nome,
             email,
-            cpf
+            cpf,
+            cep,
+            rua,
+            numero,
+            bairro,
+            cidade,
+            estado
         });
 
     return atualizarCliente;
@@ -84,8 +100,9 @@ module.exports = {
     verificarEmailExistente,
     emailExisteParaOutrosClientes,
     verificarCpfExistente,
-    cpfExisteParaOutrosCliente,
-    detalharClientes,
+    cpfExisteParaOutrosClientes,
+    listar,
     novoCliente,
-    clienteAtualizado
+    clienteAtualizado,
+    detalhar
 };

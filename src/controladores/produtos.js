@@ -1,4 +1,6 @@
-const { novoProduto, verificarProdutoId, produtoAtualizado, verificarCategoriaId, detalharProdutos, verificarProdutoExistente } = require('../servicos/consultas-produtos');
+const { novoProduto, verificarProdutoId, produtoAtualizado, verificarCategoriaId, detalharProdutos,
+    verificarProdutoExistente,
+    delProdutoid } = require('../servicos/consultas-produtos');
 
 const cadastrarProduto = async (req, res) => {
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
@@ -82,20 +84,20 @@ const deletarProduto = async (req, res) => {
 
     }
     try {
-        if (IdProdutoEncontrado) {
-            await knex("produtos").where({ id }).delete()
-            return res.status(204).send({ mensagem: 'Produto deletado' })
-
-        }
-    } catch (error) {
-        return res.status(500).json({ mensagem: error.messege });
+        await delProdutoid(id);
+        return res.status(200).json({ mensagem: 'Produto deletado.' });
     }
 
+    catch (error) {
+
+        return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
+    }
 }
+
 module.exports = {
     cadastrarProduto,
     editarProduto,
     listarProdutos,
-    deletarProduto,
-    detalharProduto
+    detalharProduto,
+    deletarProduto
 }

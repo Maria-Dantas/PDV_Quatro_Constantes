@@ -26,9 +26,10 @@ rotas.delete('/produto/:id', deletarProduto);
 rotas.get('/produto/:id', detalharProduto);
 
 rotas.post('/cliente', validarRequisicao(clienteSchema), cadastrarCliente);
-rotas.put('/cliente/:id', validarRequisicao(clienteSchema), editarDadosDoCliente);
+rotas.put('/cliente/:id', editarDadosDoCliente);
 rotas.get('/cliente', listarClientes);
-rotas.get('/transacao/:id', validarRequisicao(clienteSchema), detalharCliente);
+
+rotas.get('/cliente/:id', detalharCliente);
 
 
 module.exports = rotas;

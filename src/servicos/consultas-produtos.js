@@ -49,4 +49,19 @@ const detalharProdutos = async () => {
 
     return listar;
 };
-module.exports = { novoProduto, verificarProdutoId, produtoAtualizado, verificarCategoriaId, detalharProdutos, verificarProdutoExistente };
+const delProdutoid = async (id) => {
+    const deletar = await knex("produtos").where({ id }).delete()
+
+    return deletar;
+
+};
+
+module.exports = {
+    novoProduto,
+    verificarProdutoId,
+    produtoAtualizado,
+    verificarCategoriaId,
+    detalharProdutos,
+    verificarProdutoExistente,
+    delProdutoid
+};
