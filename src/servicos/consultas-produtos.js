@@ -65,6 +65,9 @@ const delProdutoid = async (id) => {
 
 };
 
+
+
+
 module.exports = {
     novoProduto,
     verificarProdutoId,
@@ -73,5 +76,5 @@ module.exports = {
     verificarCategoriaId,
     detalharProdutos,
     verificarProdutoExistente,
-    delProdutoid
+    delProdutoid,
 };

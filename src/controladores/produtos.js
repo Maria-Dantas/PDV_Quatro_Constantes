@@ -2,6 +2,7 @@ const { novoProduto, verificarProdutoId, produtoAtualizado, verificarCategoriaId
     verificarProdutoExistente,verificarDescricao,
     delProdutoid } = require('../servicos/consultas-produtos');
 const {listarTodosPedidos}= require('../servicos/consultas-pedidos');
+const{excluirImagem}=require('../servicos/uploads');
 
 const cadastrarProduto = async (req, res) => {
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
@@ -97,7 +98,8 @@ const detalharProduto = async (req, res) => {
 
 }
 const deletarProduto = async (req, res) => {
-    const { id } = req.params
+    const { id } = req.params;
+
     const produto_id=id;
 
     const produtosExistemPedidos = await listarTodosPedidos(produto_id);
@@ -106,12 +108,23 @@ const deletarProduto = async (req, res) => {
         return res.status(400).json({ mensagem: 'O produto está associado a um ou mais pedidos e não pode ser excluído.' });
     }
 
-    const IdProdutoEncontrado = await verificarProdutoId(id);
-    if (!IdProdutoEncontrado) {
-        return res.status(404).json({ mensagem: 'O Produto não foi encontrado.' });
-    }
     try {
+
+     const IdProdutoEncontrado = await verificarProdutoId(id);
+
+     if (!IdProdutoEncontrado) {
+        return res.status(404).json({ mensagem: 'O Produto não foi encontrado.' });
+     }
+
     
+     if (IdProdutoEncontrado.imagem) {
+        await excluirImagem(IdProdutoEncontrado.imagem);
+    }
+
+        if (!esvaziarCampoImagem) {
+            return res.status(400).json("O produto não foi excluido.");
+        }
+
         await delProdutoid(id);
         return res.status(200).json({ mensagem: 'Produto deletado.' });
     }
