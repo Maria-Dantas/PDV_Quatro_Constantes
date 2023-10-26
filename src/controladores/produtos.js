@@ -116,14 +116,9 @@ const deletarProduto = async (req, res) => {
         return res.status(404).json({ mensagem: 'O Produto não foi encontrado.' });
      }
 
-    
      if (IdProdutoEncontrado.imagem) {
         await excluirImagem(IdProdutoEncontrado.imagem);
     }
-
-        if (!esvaziarCampoImagem) {
-            return res.status(400).json("O produto não foi excluido.");
-        }
 
         await delProdutoid(id);
         return res.status(200).json({ mensagem: 'Produto deletado.' });
