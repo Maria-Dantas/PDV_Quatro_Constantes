@@ -1,11 +1,18 @@
 const { novoProduto, verificarProdutoId, produtoAtualizado, verificarCategoriaId, detalharProdutos,
     verificarProdutoExistente,verificarDescricao,atualizarImagem,
-    delProdutoid } = require('../servicos/consultas-produtos');
+    delProdutoid, carregarImagem } = require('../servicos/consultas-produtos');
 const {listarTodosPedidos}= require('../servicos/consultas-pedidos');
-const{excluirImagem}=require('../servicos/uploads');
+const{excluirImagem, uploadImagem, }=require('../servicos/uploads');
+
+const knex = require('../conexao');
+const validarProduto = require('../intermediarios/validarProduto');
 
 const cadastrarProduto = async (req, res) => {
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
+    const {originalname,mimetype,buffer} = req.file
+   
+
+    
 
     try {
         const descricaoPadronizada = descricao.toLowerCase();
@@ -14,17 +21,19 @@ const cadastrarProduto = async (req, res) => {
         if (produtoEncontrado) {
             return res.status(400).json({ mensagem: 'Já existe um produto cadastrado com a descrição informada.' });
         }
-        if (req.file){
-            const{originalname, buffer, mimetype }= req.file;
-            const{id} = produto[0];
-
-            const imagem = await uploadImagem(`produtos/${id}/${originalname}`,buffer, mimetype)
-        }
-
-        const produto = await novoProduto(descricaoPadronizada, quantidade_estoque, valor, categoria_id);
-        produto =await knex('produtos').update({produto_imagem :imagem.url}).where({id}).returning('*');
         
-        return res.status(201).json(produto);
+    
+        let produto = await novoProduto(descricaoPadronizada, quantidade_estoque, valor, categoria_id);
+        
+        
+        const imagem = await uploadImagem(
+         `produtos/${produto.id}/${originalname}`,
+         buffer, 
+         mimetype)
+        
+       produto = await knex('produtos').where({id:produto.id}).update({produto_imagem :imagem.url}).returning('*');
+        
+        return res.status(201).json(produto[0]);
     }
     catch (error) {
         return res.status(500).json({ mensagem: error.message });
@@ -34,6 +43,7 @@ const cadastrarProduto = async (req, res) => {
 
 const editarProduto = async (req, res) => {
     const { id } = req.params;
+    
 
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
     
@@ -48,10 +58,8 @@ const editarProduto = async (req, res) => {
         }
 
         await produtoAtualizado(id, descricaoPadronizada, quantidade_estoque, valor, categoria_id);
-        if(req.file){
-            await atualizarImagem(id, req.file)
         
-        }
+       
 
         return res.status(204).send();
     }
@@ -141,10 +149,55 @@ const deletarProduto = async (req, res) => {
     }
 }
 
+const atualizarImagemProduto = async (req, res)=>{
+    const {originalname,mimetype,buffer} = req.file
+    const { id } = req.params;
+
+    try {
+    
+
+        const produtoCadastrado= await validarProduto
+
+        console.log(produtoCadastrado)
+
+        if(produtoCadastrado){
+         
+            return res.status(404).json({mensagem:'Já existe produto cadastrado com a descrição informada.'})
+           
+        } 
+        
+         await excluirImagem(produtoCadastrado.produto_imagem)
+
+         const upload = await uploadImagem(
+            `produtos/${produtoCadastrado.id}/${originalname}`,
+            buffer, 
+            mimetype)
+       
+       
+           
+          const produto= await knex('produtos')
+             .where({ id })
+             .update({
+                 produto_imagem: upload.path
+                    })
+        
+       
+
+        return res.status(204).send();
+
+
+    }catch (error){
+        return res.status(500).json({ mensagem: error.message });
+
+    }
+
+}
+
 module.exports = {
     cadastrarProduto,
     editarProduto,
     listarProdutos,
     detalharProduto,
-    deletarProduto
+    deletarProduto,
+    atualizarImagemProduto
 }

@@ -24,7 +24,13 @@ const produtoSchema = joi.object({
         'number.positive': 'Não foi possível encontrar a categoria_id informada.',
         'number.min': 'Não foi possível encontrar a categoria_id informada.',
         'number.max': 'Não foi possível encontrar a categoria_id informada.',
-    })
+    }),
+    produto_imagem: joi.string().uri().optional().allow(null).messages({
+        'string.uri': 'produto_imagem deve ser uma URL válida.',
+        'string.empty': 'produto_imagem não pode ser um campo vazio.',
+        'string.base': 'produto_imagem deve ser um campo do tipo string.'
+      })
+    
 });
 
 module.exports = produtoSchema;

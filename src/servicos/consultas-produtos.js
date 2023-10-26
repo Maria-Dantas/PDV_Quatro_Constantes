@@ -1,4 +1,5 @@
 const knex = require('../conexao');
+const { uploadImagem } = require('./uploads');
 
 const novoProduto = async (descricao, quantidade_estoque, valor, categoria_id) => {
     const insereProduto = await knex('produtos')
@@ -65,20 +66,16 @@ const delProdutoid = async (id) => {
 
 };
 
-const atualizarImagem = async (id, file) => {
-    const imgProduto = await listarIMG(id);
-
-    if (imgProduto.length > 0) {
-        await excluirImagem(imgProduto[0].Key);
-    }
-
-    const { originalname, buffer, mimetype } = file;
-    const imagem_bucket = await uploadImagem(`produtos/${id}/${originalname}`, buffer, mimetype);
-
-    await knex('produtos').update({ produto_imagem: imagem_bucket.url }).where({ id });
-};
 
 
+const carregarImagem = async (produto_imagem) => {
+    const atualizaProduto = await knex('produtos')
+        .where({ id })
+        .update({
+           produto_imagem: upload.path
+        })
+
+            return atualizaProduto}
 
 module.exports = {
     novoProduto,
@@ -89,5 +86,6 @@ module.exports = {
     detalharProdutos,
     verificarProdutoExistente,
     delProdutoid,
-    atualizarImagem
+   
+    carregarImagem
 };
