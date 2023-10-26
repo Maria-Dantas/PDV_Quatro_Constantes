@@ -65,6 +65,18 @@ const delProdutoid = async (id) => {
 
 };
 
+const atualizarImagem = async (id, file) => {
+    const imgProduto = await listarIMG(id);
+
+    if (imgProduto.length > 0) {
+        await excluirImagem(imgProduto[0].Key);
+    }
+
+    const { originalname, buffer, mimetype } = file;
+    const imagem_bucket = await uploadImagem(`produtos/${id}/${originalname}`, buffer, mimetype);
+
+    await knex('produtos').update({ produto_imagem: imagem_bucket.url }).where({ id });
+};
 
 
 
@@ -77,4 +89,5 @@ module.exports = {
     detalharProdutos,
     verificarProdutoExistente,
     delProdutoid,
+    atualizarImagem
 };

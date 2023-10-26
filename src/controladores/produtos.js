@@ -1,5 +1,5 @@
 const { novoProduto, verificarProdutoId, produtoAtualizado, verificarCategoriaId, detalharProdutos,
-    verificarProdutoExistente,verificarDescricao,
+    verificarProdutoExistente,verificarDescricao,atualizarImagem,
     delProdutoid } = require('../servicos/consultas-produtos');
 const {listarTodosPedidos}= require('../servicos/consultas-pedidos');
 const{excluirImagem}=require('../servicos/uploads');
@@ -14,9 +14,16 @@ const cadastrarProduto = async (req, res) => {
         if (produtoEncontrado) {
             return res.status(400).json({ mensagem: 'Já existe um produto cadastrado com a descrição informada.' });
         }
+        if (req.file){
+            const{originalname, buffer, mimetype }= req.file;
+            const{id} = produto[0];
+
+            const imagem = await uploadImagem(`produtos/${id}/${originalname}`,buffer, mimetype)
+        }
 
         const produto = await novoProduto(descricaoPadronizada, quantidade_estoque, valor, categoria_id);
-
+        produto =await knex('produtos').update({produto_imagem :imagem.url}).where({id}).returning('*');
+        
         return res.status(201).json(produto);
     }
     catch (error) {
@@ -41,6 +48,10 @@ const editarProduto = async (req, res) => {
         }
 
         await produtoAtualizado(id, descricaoPadronizada, quantidade_estoque, valor, categoria_id);
+        if(req.file){
+            await atualizarImagem(id, req.file)
+        
+        }
 
         return res.status(204).send();
     }
