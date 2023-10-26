@@ -1,5 +1,45 @@
 const knex = require('../conexao');
 
+const quantidadeDeProduto = async (id) => {
+    const quantidade = await knex('produtos')
+        .where({ id })
+        .first();
+
+    return quantidade;
+};
+
+const valorProduto = async (id) => {
+    const produto = await knex('produtos')
+        .where({ id }).first();
+
+    return produto.valor;
+}
+
+const buscarPedidos = async (observacao, valor_total) => {
+    const inserePedido = await knex('pedido')
+        .insert({
+
+            observacao,
+            valor_total
+
+        }).returning('*');
+
+    return inserePedido[0];
+};
+
+const novoPedido = async (observacao, cliente_id, valor_total) => {
+    const inserePedido = await knex('pedidos')
+        .insert({
+
+            observacao,
+            cliente_id,
+            valor_total
+
+        }).returning('*');
+
+    return inserePedido[0];
+};
+
 const buscarPedidosCliente = async (cliente_id) => {
     const buscar = await knex('pedidos')
         .where('cliente_id', cliente_id)
@@ -27,5 +67,37 @@ const buscarPedidoId = async (pedido) => {
 
     return listar;
 }
+const inserirPedidosProdutos = async (
+    pedido_id,
+    produto_id,
+    quantidade_produto,
+    valor_produto
+) => {
+    console.log(
+        pedido_id,
+        produto_id,
+        quantidade_produto,
+        valor_produto
+    );
 
-module.exports = { buscarPedidosCliente, listarApenasPedidos, buscarPedidoId };
+    const produto = await knex('pedido_produtos')
+        .insert({
+            pedido_id,
+            produto_id,
+            quantidade_produto,
+            valor_produto
+        })
+
+}
+
+module.exports = {
+
+    quantidadeDeProduto,
+    valorProduto,
+    buscarPedidos,
+    novoPedido,
+    buscarPedidosCliente,
+    listarApenasPedidos,
+    buscarPedidoId,
+    inserirPedidosProdutos
+};

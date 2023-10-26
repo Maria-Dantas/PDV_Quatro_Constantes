@@ -70,7 +70,7 @@ const novoCliente = async (nome, email, cpf, cep, rua, numero, bairro, cidade, e
             estado
         }).returning('*');
 
-    console.log(insereCliente)
+
 
     const cliente = insereCliente[0];
 
