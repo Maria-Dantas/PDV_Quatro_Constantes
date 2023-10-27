@@ -1,6 +1,6 @@
 const aws = require('aws-sdk')
 
-const endpoint = new aws.Endpoint(process.env.ENDPOINT_BACKBLAZE)
+const endpoint = new aws.Endpoint(process.env.ENDPOINT_S3)
 
 const s3 = new aws.S3({
     endpoint,
@@ -12,13 +12,11 @@ const s3 = new aws.S3({
 
 const excluirImagem = async (path) => {
     await s3.deleteObject({
-        Bucket: process.env.BUCKET_NAME,
+        Bucket: process.env.BUCKET,
         Key: path
     }).promise()
 }
 const uploadImagem = async(path, buffer, mimetype)=>{
-    
-  
     
     const imagem = await s3.upload({
         Bucket: process.env.BUCKET,
@@ -28,11 +26,8 @@ const uploadImagem = async(path, buffer, mimetype)=>{
     }).promise()
     return {
         path:imagem.Key,
-        url:`https://${process.env.BUCKET}.${process.env.ENDPOINT_S3}.${imagem.Key}`
-        
+        url:`https://${process.env.BUCKET}.${process.env.ENDPOINT_S3}.${imagem.Key}`    
     }
-
-
 }
 const listarIMG = async(id)=>{
     const img = await s3.listObjects({
@@ -42,9 +37,6 @@ const listarIMG = async(id)=>{
     }).promise()
     return imagem.Contents;
 }
-
-
-
 
 
 module.exports = {

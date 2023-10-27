@@ -67,16 +67,6 @@ const delProdutoid = async (id) => {
 };
 
 
-
-const carregarImagem = async (produto_imagem) => {
-    const atualizaProduto = await knex('produtos')
-        .where({ id })
-        .update({
-           produto_imagem: upload.path
-        })
-
-            return atualizaProduto}
-
 module.exports = {
     novoProduto,
     verificarProdutoId,
@@ -85,7 +75,5 @@ module.exports = {
     verificarCategoriaId,
     detalharProdutos,
     verificarProdutoExistente,
-    delProdutoid,
-   
-    carregarImagem
+    delProdutoid
 };
