@@ -13,12 +13,11 @@ const valorProduto = async (id) => {
         .where({ id }).first();
 
     return produto.valor;
-}
+};
 
 const buscarPedidos = async (observacao, valor_total) => {
     const inserePedido = await knex('pedido')
         .insert({
-
             observacao,
             valor_total
 
