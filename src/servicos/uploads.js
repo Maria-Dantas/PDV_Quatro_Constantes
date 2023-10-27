@@ -16,8 +16,40 @@ const excluirImagem = async (path) => {
         Key: path
     }).promise()
 }
+const uploadImagem = async(path, buffer, mimetype)=>{
+    
+  
+    
+    const imagem = await s3.upload({
+        Bucket: process.env.BUCKET,
+        Key:path,
+        Body:buffer,
+        ContentType:mimetype
+    }).promise()
+    return {
+        path:imagem.Key,
+        url:`https://${process.env.BUCKET}.${process.env.ENDPOINT_S3}.${imagem.Key}`
+        
+    }
+
+
+}
+const listarIMG = async(id)=>{
+    const img = await s3.listObjects({
+        Bucket: process.env.BUCKET,
+        Prefix: `produtos/${id}`
+
+    }).promise()
+    return imagem.Contents;
+}
+
+
+
 
 
 module.exports = {
-    excluirImagem
+     uploadImagem,
+    excluirImagem,
+    listarIMG,
+    s3
 }
