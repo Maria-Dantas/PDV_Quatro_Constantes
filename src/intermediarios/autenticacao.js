@@ -14,7 +14,7 @@ const verificarUsuarioLogado = async (req, res, next) => {
 
     try {
         const { id } = jwt.verify(token, hash);
-        console.log(token);
+        
         const usuarioEncontrado = await verificarUsuarioId(id);
 
         if (!usuarioEncontrado) {
@@ -28,10 +28,6 @@ const verificarUsuarioLogado = async (req, res, next) => {
         next();
 
     } catch (error) {
-
-        console.log(error.messege)
-
-
 
         if (error.message === "invalid token") {
             return res.status(401).json({ mensagem: 'Para acessar este recurso um token de autenticação válido deve ser enviado.' });
