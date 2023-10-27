@@ -1,7 +1,5 @@
-const knex = require('../conexao');
 const { verificarClienteId } = require('../servicos/consultas-clientes');
-const { buscarPedidosCliente, listarApenasPedidos, buscarPedidoId, buscarPedido, novoPedido, valorProduto, inserirPedidosProdutos} = require('../servicos/consultas-pedidos');
-
+const { buscarPedidosCliente, listarApenasPedidos, buscarPedidoId, novoPedido, valorProduto, inserirPedidosProdutos } = require('../servicos/consultas-pedidos');
 
 const cadastrarPedido = async (req, res) => {
     let { cliente_id, pedido_produtos, observacao } = req.body;

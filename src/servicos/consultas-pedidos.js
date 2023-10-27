@@ -67,13 +67,8 @@ const buscarPedidoId = async (pedido) => {
 
     return listar;
 }
-const inserirPedidosProdutos = async (
-    pedido_id,
-    produto_id,
-    quantidade_produto,
-    valor_produto
-) => {
-    console.log(
+const inserirPedidosProdutos = async (pedido_id, produto_id, quantidade_produto, valor_produto) => {
+    (
         pedido_id,
         produto_id,
         quantidade_produto,
@@ -86,18 +81,18 @@ const inserirPedidosProdutos = async (
             produto_id,
             quantidade_produto,
             valor_produto
-        })
-
+        });
+    return produto;
 }
-    const listarTodosPedidos= async(produto_id)=>{
+const listarTodosPedidos = async (produto_id) => {
 
-        const produtosNosPedidos = await knex('pedido_produtos')
+    const produtosNosPedidos = await knex('pedido_produtos')
         .select('produto_id')
         .where('produto_id', produto_id);
 
     return produtosNosPedidos.map(row => row.produto_id);
-    }
-    
+};
+
 module.exports = {
 
     quantidadeDeProduto,
@@ -109,4 +104,5 @@ module.exports = {
     buscarPedidoId,
     inserirPedidosProdutos,
     listarTodosPedidos
+
 };

@@ -63,7 +63,6 @@ const editarDadosDoCliente = async (req, res) => {
     };
 };
 
-
 const listarClientes = async (req, res) => {
     try {
         const clientes = await listar();
@@ -74,7 +73,6 @@ const listarClientes = async (req, res) => {
         return res.status(500).json({ mensagem: 'Erro interno do servidor.' });
     };
 };
-
 
 const detalharCliente = async (req, res) => {
     const { id } = req.params
