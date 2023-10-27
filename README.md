@@ -2,22 +2,26 @@
 
 ![](https://i.imgur.com/xG74tOh.png)
 
-# Desafio Módulo 5 - Backend
 
-## Como entregar?
+##  O Projeto  as Quatro Constantes 
 
-- [X] Crie um repositório público no GitHub de algum membro de equipe
-- [X] Adicione os membros da equipe no repositório
-- [X] Enviei o link desse repositório na plataforma
-- [X] Link do deploy https://ill-red-scarab-kit.cyclic.cloud/
+O projeto  é uma API para um ponto de venda(PDV) desenvolvida utilizando  a arquitetura REST na linguagem de programação javaScript(node.js)
+
+confira em Link do deploy https://ill-red-scarab-kit.cyclic.cloud/
 
 
-## Descrição do desafio
+## Instruçoes Para acessar o projeto
+1. clone este repositorio 
+  git clone <URL do projeto>
+2. Instale as dependencias 
+  npm install
+3. Abra a pasta do projeto
+   cd <Path da pasta>
+4. Rode o projeto
+   npm run dev
 
-Seja bem vindo(a) ao desafio do módulo 5.
 
-Sua tarefa como desenvolvedor(a) será criar uma API para um PDV (Frente de Caixa). Esse será um projeto piloto, ou seja, no futuro outras funcionalidades serão implementadas.
-
+ 
 **Importante 1: Sempre que a validação de uma requisição falhar, responda com código de erro e mensagem adequada à situação, ok?**
 
 **Importante 2: Para endpoints de cadastro/atualização os objetos de requisição devem conter as propriedades equivalentes as colunas das tabelas.**

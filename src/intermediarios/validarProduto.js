@@ -10,4 +10,9 @@ const validarProduto = async (req,res,next) => {
     }
     next();
 };
-module.exports = validarProduto;
+
+
+
+
+
+module.exports = validarProduto

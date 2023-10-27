@@ -5,7 +5,7 @@ const {listarTodosPedidos}= require('../servicos/consultas-pedidos');
 const{excluirImagem, uploadImagem, }=require('../servicos/uploads');
 
 const knex = require('../conexao');
-const validarProduto = require('../intermediarios/validarProduto');
+
 
 const cadastrarProduto = async (req, res) => {
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
@@ -149,14 +149,16 @@ const deletarProduto = async (req, res) => {
     }
 }
 
-const atualizarImagemProduto = async (req, res)=>{
+const atualizarImagemProduto = async (req, res)=>{ 
+   
     const {originalname,mimetype,buffer} = req.file
     const { id } = req.params;
+
 
     try {
     
 
-        const produtoCadastrado= await validarProduto
+        const produtoCadastrado= await verificarProdutoId(id)
 
         console.log(produtoCadastrado)
 
