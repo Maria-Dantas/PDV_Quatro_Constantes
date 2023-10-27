@@ -12,9 +12,6 @@ const { cadastrarCliente, editarDadosDoCliente, listarClientes, detalharCliente 
 const clienteSchema = require('./validacoes/clienteSchema');
 const { listarPedidos, cadastrarPedido } = require('./controladores/pedidos');
 const multer = require('./intermediarios/multer');
-//const {carregarImagem} = require('./servicos/carregarImagem');
-const { uploadImagem } = require('./servicos/uploads');
-
 
 const rotas = express();
 
