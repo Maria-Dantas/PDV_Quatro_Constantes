@@ -8,6 +8,14 @@ O projeto  as **Quatro Constantes**,  uma API para um ponto de venda(PDV), foi d
 
 A API pode ser acessada no https://ill-red-scarab-kit.cyclic.cloud/
 
+## Equipe de projeto
+[Maria Dantas](https://github.com/Maria-Dantas)
+
+[Samy Celes](https://github.com/samyceles)
+
+[Juliana T](https://github.com/JulianaT93)
+
+[Deise Gomes](https://github.com/Deisemaya)
 
 ## Instruções para utilizar o repositorio 
 ```bash
